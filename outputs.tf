@@ -8,5 +8,8 @@ output "Internet-GW" {
   value = aws_internet_gateway.igw-for-my-project.id
 }
 output "Route-table" {
-  value = aws_route_table.route-table-for-my-project.id
+  value = aws_default_route_table.default-route-table.id
+}
+output "Security-group" {
+  value = aws_security_group.sg-http80-https443-ssh22.id
 }

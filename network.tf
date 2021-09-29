@@ -1,3 +1,51 @@
+resource "aws_security_group" "sg-http80-https443-ssh22" {
+  name = "${var.project_name}-${var.project_environment}-sg-http80-https443-ssh22"
+  description = "Firewall for WebServer allow http https ssh from the internet"
+  vpc_id = aws_vpc.vpc-for-my-progect.id
+
+  dynamic "ingress" {
+    for_each = ["80", "443"]
+    content {
+      description     = "inbound from the internet"
+      from_port       = ingress.value
+      to_port         = ingress.value
+      protocol        = "tcp"
+      cidr_blocks     = [ "0.0.0.0/0" ]
+      ipv6_cidr_blocks= [ "::/0" ]
+      prefix_list_ids = []
+      security_groups = []
+      self            = false  
+    }
+  }
+  ingress {
+    description       = "inbound SSH port 22 from white list variable"
+    from_port         = 22
+    to_port           = 22
+    protocol          = "tcp"
+    cidr_blocks       = [ var.ip_for_ssh_inbound_connection ]
+    ipv6_cidr_blocks  = []
+    prefix_list_ids   = []
+    security_groups   = []
+    self              = false
+  }
+  
+  egress = [ {
+    description       = "Outbound everything"
+    from_port         = 0
+    to_port           = 0
+    protocol          = "-1"
+    cidr_blocks       = [ "0.0.0.0/0" ]
+    ipv6_cidr_blocks  = [ "::/0" ]
+    prefix_list_ids   = [] 
+    security_groups   = []
+    self              = false
+  } ]
+    
+  tags = {
+    Name = "${var.project_name}-${var.project_environment}-allow-http-https-ssh-from-0"
+  }
+}
+
 resource "aws_vpc" "vpc-for-my-progect" {
   cidr_block   = var.vpc_cidr_block
   tags = merge ( var.tags_common, { Name : "${var.project_name}-${var.project_environment}-vpc" } )
@@ -15,16 +63,11 @@ resource "aws_internet_gateway" "igw-for-my-project" {
   tags    = merge ( var.tags_common, { Name : "${var.project_name}-${var.project_environment}-internet-gw" } )
 }
 
-resource "aws_route_table" "route-table-for-my-project" {
-  vpc_id        = aws_vpc.vpc-for-my-progect.id
+resource "aws_default_route_table" "default-route-table" {
+  default_route_table_id = aws_vpc.vpc-for-my-progect.default_route_table_id
   route {
     cidr_block  = "0.0.0.0/0"
     gateway_id  = aws_internet_gateway.igw-for-my-project.id
   }
   tags = merge ( var.tags_common, { Name : "${var.project_name}-${var.project_environment}-route-table" } )
-}
-
-resource "aws_route_table_association" "route-table-assoc-for-my-project" {
-  subnet_id       = aws_subnet.subnet-for-my-project.id
-  route_table_id  = aws_route_table.route-table-for-my-project.id
 }
