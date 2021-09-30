@@ -1,10 +1,8 @@
-resource "aws_security_group" "sg-http80-https443-ssh22" {
-  name = "${var.project_name}-${var.project_environment}-sg-http80-https443-ssh22"
-  description = "Firewall for WebServer allow http https ssh from the internet"
+resource "aws_default_security_group" "sg-http80-https443-ssh22" {
   vpc_id = aws_vpc.vpc-for-my-progect.id
 
   dynamic "ingress" {
-    for_each = ["80", "443"]
+    for_each = var.ports_to_open
     content {
       description     = "inbound from the internet"
       from_port       = ingress.value
@@ -40,10 +38,7 @@ resource "aws_security_group" "sg-http80-https443-ssh22" {
     security_groups   = []
     self              = false
   } ]
-    
-  tags = {
-    Name = "${var.project_name}-${var.project_environment}-allow-http-https-ssh-from-0"
-  }
+  tags = merge ( var.tags_common, { Name : "${var.project_name}-${var.project_environment}-allow-http-https-ssh-from-0" } )
 }
 
 resource "aws_vpc" "vpc-for-my-progect" {
