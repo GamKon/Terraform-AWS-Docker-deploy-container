@@ -7,6 +7,7 @@ variable "ip_for_ssh_inbound_connection"  { default = "0.0.0.0/0" }
 variable "public_key_location"            {}
 variable "private_key_location"           {}
 variable "instance_type_webserver"        { default = "t2.micro" }
+variable "ami_name"                       { default = "amzn2-ami-hvm-2.0.*-x86_64-gp2" }
 variable "env_prefix"                     { default = "Dev" }
 variable "project_environment"            { default = "Dev"}
 variable "project_name"                   { default = "Project" }

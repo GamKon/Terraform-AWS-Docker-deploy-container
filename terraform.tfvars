@@ -9,6 +9,7 @@ bootstrap_script_file           = "user_data.sh"
 tfstate_s3_bucket               = "terraform-state-files-gamkon"
 
 instance_type_webserver         = "t2.micro"
+ami_name                        = "amzn2-ami-hvm-2.0.*-x86_64-gp2" 
 vpc_cidr_block                  = "192.168.0.0/16"
 subnet_cidr_block               = "192.168.1.0/24"
 env_prefix                      = "Dev"

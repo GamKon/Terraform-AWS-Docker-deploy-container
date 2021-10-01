@@ -8,8 +8,8 @@ output "Security-group" {
   value = module.networking.security_group.id
 }
 output "Server-1" {
-  value = aws_instance.server-for-my-project.id
+  value = module.ec2_webserver.server-1.id
 }
 output "Server-1-public-IP" {
-  value = aws_instance.server-for-my-project.public_ip
+  value = module.ec2_webserver.server-1.public_ip
 }
